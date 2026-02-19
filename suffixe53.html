@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Passive Partizipien Präsens</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .intro-box {
+            background: #ebf5fb;
+            padding: 20px;
+            border-left: 5px solid var(--secondary);
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: #fff;
+        }
+
+        .task-card h3 {
+            margin-top: 0;
+            color: var(--secondary);
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-sol { background: var(--success); color: white; }
+        button:hover { opacity: 0.8; }
+
+        /* Form-Elemente */
+        select {
+            padding: 8px;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        select.correct { border-color: var(--success); background-color: #e8f5e9; }
+        select.incorrect { border-color: var(--error); background-color: #ffebee; }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .radio-label {
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .radio-label.correct { border-color: var(--success); background-color: #e8f5e9; }
+        .radio-label.incorrect { border-color: var(--error); background-color: #ffebee; }
+
+        /* Drag & Drop */
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .draggable {
+            padding: 6px 12px;
+            background: var(--white);
+            border: 2px solid var(--secondary);
+            border-radius: 4px;
+            cursor: grab;
+            font-weight: bold;
+        }
+
+        .drop-zone-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .drop-zone {
+            min-width: 120px;
+            height: 30px;
+            border-bottom: 2px dashed var(--secondary);
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+        }
+
+        .drop-zone.correct { border-bottom: 2px solid var(--success); color: var(--success); }
+        .drop-zone.incorrect { border-bottom: 2px solid var(--error); color: var(--error); }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+
+    <div class="intro-box">
+        <h3>Bildung passiver Partizipien Präsens</h3>
+        <p>Man bildet sie aus der 1. Person Plural (мы-Form) im Präsens:</p>
+        <ul>
+            <li><strong>1. Konjugation:</strong> Suffix <strong>-ем-</strong> (z.B. читаем → читаемый)</li>
+            <li><strong>2. Konjugation:</strong> Suffix <strong>-им-</strong> (z.B. любим → любимый)</li>
+            <li>Nur bei <strong>transitiven Verben</strong> (Objekt im 4. Fall möglich) im <strong>unvollendeten Aspekt</strong>.</li>
+        </ul>
+    </div>
+
+    <!-- Aufgaben 1-3: Suffix-Logik -->
+    <div class="task-card" id="t1">
+        <h3>1. Welches Suffix nutzt das Verb „сообщать“ (мы сообщаем)?</h3>
+        <select onchange="checkSel(this)" data-ans="-ем-">
+            <option value="">-- wählen --</option>
+            <option value="-им-">-им-</option>
+            <option value="-ем-">-ем-</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t1')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t1')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t2">
+        <h3>2. Welches Suffix nutzt das Verb „хранить“ (мы храним)?</h3>
+        <select onchange="checkSel(this)" data-ans="-им-">
+            <option value="">-- wählen --</option>
+            <option value="-ем-">-ем-</option>
+            <option value="-им-">-им-</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t2')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t2')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t3">
+        <h3>3. Welches Suffix nutzt das Verb „изучать“ (мы изучаем)?</h3>
+        <select onchange="checkSel(this)" data-ans="-ем-">
+            <option value="">-- wählen --</option>
+            <option value="-ем-">-ем-</option>
+            <option value="-им-">-им-</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t3')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t3')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgaben 4-11: Suffix-Zuordnung Drag & Drop -->
+    <div class="task-card" id="t-drag">
+        <h3>4-11. Morphologische Bildung: Ordne die мы-Formen den Suffixen zu.</h3>
+        <div class="drag-container">
+            <div class="draggable" draggable="true" id="d1">любим</div>
+            <div class="draggable" draggable="true" id="d2">читаем</div>
+            <div class="draggable" draggable="true" id="d3">видим</div>
+            <div class="draggable" draggable="true" id="d4">используем</div>
+            <div class="draggable" draggable="true" id="d5">слышим</div>
+            <div class="draggable" draggable="true" id="d6">проверяем</div>
+            <div class="draggable" draggable="true" id="d7">строим</div>
+            <div class="draggable" draggable="true" id="d8">называем</div>
+        </div>
+
+        <p><strong>Kategorie -ем- (1. Konjugation):</strong></p>
+        <div class="drop-zone-wrapper">1. <div class="drop-zone" data-ans="читаем"></div></div>
+        <div class="drop-zone-wrapper">2. <div class="drop-zone" data-ans="используем"></div></div>
+        <div class="drop-zone-wrapper">3. <div class="drop-zone" data-ans="проверяем"></div></div>
+        <div class="drop-zone-wrapper">4. <div class="drop-zone" data-ans="называем"></div></div>
+
+        <p><strong>Kategorie -им- (2. Konjugation):</strong></p>
+        <div class="drop-zone-wrapper">1. <div class="drop-zone" data-ans="любим"></div></div>
+        <div class="drop-zone-wrapper">2. <div class="drop-zone" data-ans="видим"></div></div>
+        <div class="drop-zone-wrapper">3. <div class="drop-zone" data-ans="слышим"></div></div>
+        <div class="drop-zone-wrapper">4. <div class="drop-zone" data-ans="строим"></div></div>
+
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t-drag')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solDrag('t-drag')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgaben 12-15: Kongruenz (Genus/Numerus) -->
+    <div class="task-card" id="t12">
+        <h3>12. Книга (f.) + читать:</h3>
+        <select onchange="checkSel(this)" data-ans="читаемая">
+            <option value="">-- wählen --</option>
+            <option value="читаемый">читаемый</option>
+            <option value="читаемая">читаемая</option>
+            <option value="читаемое">читаемое</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t12')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t12')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t13">
+        <h3>13. Письмо (n.) + получать:</h3>
+        <select onchange="checkSel(this)" data-ans="получаемое">
+            <option value="">-- wählen --</option>
+            <option value="получаемый">получаемый</option>
+            <option value="получаемая">получаемая</option>
+            <option value="получаемое">получаемое</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t13')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t13')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t14">
+        <h3>14. Проблемы (pl.) + обсуждать:</h3>
+        <select onchange="checkSel(this)" data-ans="обсуждаемые">
+            <option value="">-- wählen --</option>
+            <option value="обсуждаемый">обсуждаемый</option>
+            <option value="обсуждаемые">обсуждаемые</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t14')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t14')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t15">
+        <h3>15. Ausnahme „создавать“ (erschaffen):</h3>
+        <select onchange="checkSel(this)" data-ans="создаваемый">
+            <option value="">-- wählen --</option>
+            <option value="создаваемый">создаваемый</option>
+            <option value="создаемый">создаемый</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t15')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t15')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgaben 16-18: Handelnde Person (Instrumental) -->
+    <div class="task-card" id="t16">
+        <h3>16. Das Buch, gelesen „vom Schüler“ (ученик):</h3>
+        <select onchange="checkSel(this)" data-ans="учеником">
+            <option value="">-- wählen --</option>
+            <option value="ученик">ученик</option>
+            <option value="учеником">учеником</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t16')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t16')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t17">
+        <h3>17. Das Lied, geliebt „von allen“ (все):</h3>
+        <select onchange="checkSel(this)" data-ans="всеми">
+            <option value="">-- wählen --</option>
+            <option value="все">все</option>
+            <option value="всеми">всеми</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t17')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t17')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t18">
+        <h3>18. Das Projekt, geleitet „vom Ingenieur“ (инженер):</h3>
+        <select onchange="checkSel(this)" data-ans="инженером">
+            <option value="">-- wählen --</option>
+            <option value="инженер">инженер</option>
+            <option value="инженером">инженером</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t18')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t18')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgaben 19-20: Theorie/Wahl -->
+    <div class="task-card" id="t19">
+        <h3>19. Kann man von „идти“ (gehen) ein Passiv bilden?</h3>
+        <select onchange="checkSel(this)" data-ans="Nein, da intransitiv">
+            <option value="">-- wählen --</option>
+            <option value="Ja">Ja</option>
+            <option value="Nein, da intransitiv">Nein, da intransitiv</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t19')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t19')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <div class="task-card" id="t20">
+        <h3>20. Welche Aspekt-Form ist für dieses Partizip nötig?</h3>
+        <select onchange="checkSel(this)" data-ans="Unvollendeter Aspekt (НСВ)">
+            <option value="">-- wählen --</option>
+            <option value="Vollendeter Aspekt (СВ)">Vollendeter Aspekt (СВ)</option>
+            <option value="Unvollendeter Aspekt (НСВ)">Unvollendeter Aspekt (НСВ)</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resT('t20')">Zurücksetzen</button>
+            <button class="btn-sol" onclick="solSel('t20')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- Logik für Dropdowns ---
+    function checkSel(el) {
+        const ans = el.getAttribute('data-ans');
+        el.className = (el.value === ans) ? 'correct' : 'incorrect';
+    }
+
+    function solSel(id) {
+        const el = document.getElementById(id).querySelector('select');
+        el.value = el.getAttribute('data-ans');
+        el.className = 'correct';
+    }
+
+    // --- Drag & Drop Logik ---
+    let dragged = null;
+
+    document.addEventListener("dragstart", (e) => {
+        if (e.target.classList.contains("draggable")) {
+            dragged = e.target;
+        }
+    });
+
+    document.addEventListener("dragover", (e) => e.preventDefault());
+
+    document.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (e.target.classList.contains("drop-zone") && dragged) {
+            e.target.innerText = dragged.innerText;
+            const correctAns = e.target.getAttribute('data-ans');
+            e.target.className = (dragged.innerText === correctAns) ? "drop-zone correct" : "drop-zone incorrect";
+        }
+    });
+
+    // --- Buttons ---
+    function resT(id) {
+        const card = document.getElementById(id);
+        const sel = card.querySelector('select');
+        if (sel) {
+            sel.value = "";
+            sel.className = "";
+        }
+        const zones = card.querySelectorAll('.drop-zone');
+        zones.forEach(z => {
+            z.innerText = "";
+            z.className = "drop-zone";
+        });
+    }
+
+    function solDrag(id) {
+        const card = document.getElementById(id);
+        const zones = card.querySelectorAll('.drop-zone');
+        zones.forEach(z => {
+            z.innerText = z.getAttribute('data-ans');
+            z.className = "drop-zone correct";
+        });
+    }
+</script>
+
+</body>
+</html>
