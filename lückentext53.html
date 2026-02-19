@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Syntax & Kongruenz</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .intro-box {
+            background: #e8f6fe;
+            padding: 20px;
+            border-left: 5px solid var(--secondary);
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sentence {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .context-info {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        select {
+            padding: 8px;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            font-size: 1em;
+            outline: none;
+            transition: 0.3s;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        select.correct {
+            border-color: var(--success);
+            background-color: #e8f5e9;
+        }
+
+        select.incorrect {
+            border-color: var(--error);
+            background-color: #ffebee;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-sol { background: var(--success); color: white; }
+        button:hover { opacity: 0.8; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .sentence { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+
+    <div class="intro-box">
+        <h3>Syntax & Kongruenz: Passiv-Partizip Präsens</h3>
+        <p>Das Partizip verhält sich wie ein Adjektiv: Es muss in <strong>Genus, Numerus und Kasus</strong> mit dem Substantiv übereinstimmen, auf das es sich bezieht.</p>
+        <p>Der Handelnde (Agens) steht immer im <strong>Instrumental (5. Fall)</strong>.</p>
+    </div>
+
+    <div id="tasks-container"></div>
+
+</div>
+
+<script>
+    const taskData = [
+        {
+            sentence: "Это книга (f., Nom.), ... студентом.",
+            options: ["читаемый", "читаемая", "читаемое"],
+            answer: "читаемая",
+            context: "Nominativ Singular, Feminin"
+        },
+        {
+            sentence: "Я вижу книгу (f., Acc.), ... студентом.",
+            options: ["читаемую", "читаемой", "читаемая"],
+            answer: "читаемую",
+            context: "Akkusativ Singular, Feminin"
+        },
+        {
+            sentence: "Мы говорим о книге (f., Prep.), ... студентом.",
+            options: ["читаемую", "читаемой", "читаемая"],
+            answer: "читаемой",
+            context: "Präpositional Singular, Feminin"
+        },
+        {
+            sentence: "Это вопрос (m., Nom.), ... нами на уроке.",
+            options: ["обсуждаемый", "обсуждаемого", "обсуждаемым"],
+            answer: "обсуждаемый",
+            context: "Nominativ Singular, Maskulin"
+        },
+        {
+            sentence: "У нас нет вопроса (m., Gen.), ... нами.",
+            options: ["обсуждаемый", "обсуждаемого", "обсуждаемому"],
+            answer: "обсуждаемого",
+            context: "Genitiv Singular, Maskulin"
+        },
+        {
+            sentence: "Мы рады вопросу (m., Dat.), ... нами.",
+            options: ["обсуждаемый", "обсуждаемого", "обсуждаемому"],
+            answer: "обсуждаемому",
+            context: "Dativ Singular, Maskulin"
+        },
+        {
+            sentence: "Письмо (n., Nom.), ... мамой, лежит на столе.",
+            options: ["получаемый", "получаемая", "получаемое"],
+            answer: "получаемое",
+            context: "Nominativ Singular, Neutrum"
+        },
+        {
+            sentence: "Я жду письма (n., Gen.), ... мамой.",
+            options: ["получаемого", "получаемой", "получаемое"],
+            answer: "получаемого",
+            context: "Genitiv Singular, Neutrum"
+        },
+        {
+            sentence: "Песни (pl., Nom.), ... всеми, очень красивые.",
+            options: ["любимый", "любимая", "любимые"],
+            answer: "любимые",
+            context: "Nominativ Plural"
+        },
+        {
+            sentence: "Я слушаю песни (pl., Acc.), ... всеми.",
+            options: ["любимые", "любимых", "любимыми"],
+            answer: "любимые",
+            context: "Akkusativ Plural (unbelebt)"
+        },
+        {
+            sentence: "Статьи (pl., Nom.), ... переводчиком, интересные.",
+            options: ["переводимая", "переводимые", "переводимых"],
+            answer: "переводимые",
+            context: "Nominativ Plural"
+        },
+        {
+            sentence: "Я пользуюсь статьями (pl., Instr.), ... переводчиком.",
+            options: ["переводимые", "переводимых", "переводимыми"],
+            answer: "переводимыми",
+            context: "Instrumental Plural"
+        },
+        {
+            sentence: "Проблема (f., Nom.), ... правительством, сложная.",
+            options: ["решаемый", "решаемая", "решаемое"],
+            answer: "решаемая",
+            context: "Nominativ Singular, Feminin"
+        },
+        {
+            sentence: "К заданию (n., Dat.), ... учителем, нужно подготовиться.",
+            options: ["исправляемый", "исправляемому", "исправляемым"],
+            answer: "исправляемому",
+            context: "Dativ Singular, Neutrum"
+        },
+        {
+            sentence: "Мы думаем об уроках (pl., Prep.), ... школой.",
+            options: ["проводимых", "проводимые", "проводимым"],
+            answer: "проводимых",
+            context: "Präpositional Plural"
+        },
+        {
+            sentence: "Дом (m., Nom.), ... рабочими, скоро будет готов.",
+            options: ["строимое", "строимый", "строимая"],
+            answer: "строимый",
+            context: "Nominativ Singular, Maskulin"
+        },
+        {
+            sentence: "Я вижу дом (m., Acc.), ... рабочими.",
+            options: ["строимый", "строимого", "строимым"],
+            answer: "строимый",
+            context: "Akkusativ Singular, Maskulin (unbelebt)"
+        },
+        {
+            sentence: "Газета (f., Nom.), ... дедушкой, лежит здесь.",
+            options: ["выписываемая", "выписываемый", "выписываемое"],
+            answer: "выписываемая",
+            context: "Nominativ Singular, Feminin"
+        },
+        {
+            sentence: "В газеte (f., Prep.), ... дедушкой, много новостей.",
+            options: ["выписываемой", "выписываемую", "выписываемая"],
+            answer: "выписываемой",
+            context: "Präpositional Singular, Feminin"
+        },
+        {
+            sentence: "Ошибки (pl., Nom.), ... нами, исправлены.",
+            options: ["допускаемый", "допускаемая", "допускаемые"],
+            answer: "допускаемые",
+            context: "Nominativ Plural"
+        }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('tasks-container');
+        taskData.forEach((task, idx) => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${idx}`;
+
+            let selectHTML = `<select onchange="evaluateSelect(this, '${task.answer}')">
+                <option value="">-- wählen --</option>
+                ${task.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+            </select>`;
+
+            // Ersetze die Punkte im Satz durch das Dropdown
+            const sentenceWithSelect = task.sentence.replace("...", selectHTML);
+
+            card.innerHTML = `
+                <div class="context-info">Kontext: ${task.context}</div>
+                <div class="sentence">${idx + 1}. ${sentenceWithSelect}</div>
+                <div class="button-group">
+                    <button class="btn-reset" onclick="resetTask(${idx})">Zurücksetzen</button>
+                    <button class="btn-sol" onclick="solveTask(${idx}, '${task.answer}')">Lösung anzeigen</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.evaluateSelect = function(select, correctAnswer) {
+        select.classList.remove('correct', 'incorrect');
+        if (select.value === "") return;
+        
+        if (select.value === correctAnswer) {
+            select.classList.add('correct');
+        } else {
+            select.classList.add('incorrect');
+        }
+    }
+
+    window.resetTask = function(idx) {
+        const card = document.getElementById(`task-${idx}`);
+        const select = card.querySelector('select');
+        select.value = "";
+        select.classList.remove('correct', 'incorrect');
+    }
+
+    window.solveTask = function(idx, correctAnswer) {
+        const card = document.getElementById(`task-${idx}`);
+        const select = card.querySelector('select');
+        select.value = correctAnswer;
+        select.classList.add('correct');
+        select.classList.remove('incorrect');
+    }
+
+    renderTasks();
+</script>
+
+</body>
+</html>
