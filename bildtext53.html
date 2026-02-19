@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Bild-Text-Zuordnung</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; margin-bottom: 5px; color: var(--primary); }
+        .subtitle { text-align: center; color: var(--secondary); margin-bottom: 25px; font-weight: bold; }
+
+        .intro-box {
+            background: #e8f6fe;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: #fff;
+            align-items: center;
+        }
+
+        .image-box {
+            font-size: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            height: 150px;
+        }
+
+        .options-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1.05em;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary);
+            background-color: #f0f8ff;
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724;
+        }
+
+        .option-btn.incorrect {
+            background-color: #f8d7da !important;
+            border-color: var(--error) !important;
+            color: #721c24;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button.control-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-sol { background: var(--secondary); color: white; }
+
+        @media (max-width: 650px) {
+            .task-card { grid-template-columns: 1fr; }
+            .image-box { height: 120px; font-size: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+    <div class="subtitle">Bild-Text-Zuordnung: Passiv-Partizipien</div>
+
+    <div class="intro-box">
+        <strong>Anleitung:</strong> Betrachte das Bild (Emoji) und wähle den Satz aus, der das <strong>Objekt</strong> mit einem passiven Partizip Präsens korrekt beschreibt.
+    </div>
+
+    <div id="tasks-container"></div>
+</div>
+
+<script>
+    const taskData = [
+        {
+            emoji: "🍎👦",
+            label: "Ein Junge isst einen Apfel.",
+            options: [
+                { text: "Яблоко, съедаемое мальчиком", correct: true },
+                { text: "Мальчик, съедающий яблоко", correct: false },
+                { text: "Яблоко, съеденное мальчиком", correct: false }
+            ]
+        },
+        {
+            emoji: "📖👧",
+            label: "Ein Mädchen liest ein Buch.",
+            options: [
+                { text: "Девочка, читающая книгу", correct: false },
+                { text: "Книга, читаемая девочкой", correct: true },
+                { text: "Книга, читающая девочкой", correct: false }
+            ]
+        },
+        {
+            emoji: "🎨👨‍🎨",
+            label: "Ein Künstler malt ein Bild.",
+            options: [
+                { text: "Картина, рисуемая художником", correct: true },
+                { text: "Художник, рисуемый картиной", correct: false },
+                { text: "Картина, рисующая художником", correct: false }
+            ]
+        },
+        {
+            emoji: "🏠👷",
+            label: "Bauarbeiter bauen ein Haus.",
+            options: [
+                { text: "Рабочие, строящие дом", correct: false },
+                { text: "Дом, строящий рабочими", correct: false },
+                { text: "Дом, строимый рабочими", correct: true }
+            ]
+        },
+        {
+            emoji: "❤️👩‍👦",
+            label: "Eine Mutter liebt ihren Sohn.",
+            options: [
+                { text: "Сын, любимый мамой", correct: true },
+                { text: "Мама, любимая сыном", correct: false },
+                { text: "Сын, любящий мамой", correct: false }
+            ]
+        },
+        {
+            emoji: "💬👥",
+            label: "Leute besprechen ein Problem.",
+            options: [
+                { text: "Люди, обсуждающие проблему", correct: false },
+                { text: "Проблема, обсуждаемая людьми", correct: true },
+                { text: "Проблема, обсуждающая людьми", correct: false }
+            ]
+        },
+        {
+            emoji: "🔍🧪",
+            label: "Ein Forscher untersucht eine Flüssigkeit.",
+            options: [
+                { text: "Жидкость, изучаемая учёным", correct: true },
+                { text: "Учёный, изучаемый жидкостью", correct: false },
+                { text: "Жидкость, изученная учёным", correct: false }
+            ]
+        },
+        {
+            emoji: "🎸🎶",
+            label: "Ein Musiker spielt ein Lied.",
+            options: [
+                { text: "Музыкант, исполняющий песню", correct: false },
+                { text: "Песня, исполняемая музыкантом", correct: true },
+                { text: "Песня, исполняющая музыкантом", correct: false }
+            ]
+        },
+        {
+            emoji: "🛡️🔑",
+            label: "Eine Familie hütet ein Geheimnis.",
+            options: [
+                { text: "Тайна, хранимая семьёй", correct: true },
+                { text: "Семья, хранимая тайной", correct: false },
+                { text: "Тайна, хранящая семьёй", correct: false }
+            ]
+        },
+        {
+            emoji: "🎓🤝",
+            label: "Alle respektieren den Professor.",
+            options: [
+                { text: "Профессор, уважающий всеми", correct: false },
+                { text: "Все, уважаемые профессором", correct: false },
+                { text: "Профессор, уважаемый всеми", correct: true }
+            ]
+        }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('tasks-container');
+        taskData.forEach((task, idx) => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${idx}`;
+
+            let optionsHTML = task.options.map((opt, optIdx) => `
+                <button class="option-btn" onclick="checkAnswer(this, ${opt.correct}, ${idx})">${opt.text}</button>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="image-box" title="${task.label}">${task.emoji}</div>
+                <div class="options-box">
+                    ${optionsHTML}
+                    <div class="button-group">
+                        <button class="control-btn btn-reset" onclick="resetTask(${idx})">Zurücksetzen</button>
+                        <button class="control-btn btn-sol" onclick="showSolution(${idx})">Lösung</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.checkAnswer = function(btn, isCorrect, taskIdx) {
+        const card = document.getElementById(`task-${taskIdx}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+        
+        if (isCorrect) {
+            btn.classList.add('correct');
+        } else {
+            btn.classList.add('incorrect');
+        }
+    };
+
+    window.resetTask = function(idx) {
+        const card = document.getElementById(`task-${idx}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+    };
+
+    window.showSolution = function(idx) {
+        const card = document.getElementById(`task-${idx}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        const task = taskData[idx];
+
+        buttons.forEach((b, bIdx) => {
+            b.classList.remove('correct', 'incorrect');
+            if (task.options[bIdx].correct) {
+                b.classList.add('correct');
+            }
+        });
+    };
+
+    renderTasks();
+</script>
+
+</body>
+</html>
