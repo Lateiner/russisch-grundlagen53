@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Satz-Puzzle</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box {
+            background-color: #eef2f7;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .task-card {
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .active-sentence {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .dropzone {
+            min-height: 60px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            background-color: #fdfdfd;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .dropzone.correct { border-color: var(--success); background-color: #f0fff4; }
+        .dropzone.incorrect { border-color: var(--error); background-color: #fff5f5; }
+
+        .chip-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 40px;
+            padding: 10px;
+            background: #f1f2f6;
+            border-radius: 8px;
+        }
+
+        .word-chip {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--secondary);
+            border-radius: 6px;
+            cursor: grab;
+            user-select: none;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .word-chip:active { cursor: grabbing; }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-solution { background-color: var(--success); color: white; }
+        button:hover { opacity: 0.9; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+
+    <div class="intro-box">
+        <h3>Satz-Puzzle: Aktiv zu Passiv</h3>
+        <p>Transformiere den Aktiv-Satz in eine Partizipialkonstruktion. Ziehe die Wörter in die richtige Reihenfolge in das obere Feld. Achte auf das Komma!</p>
+    </div>
+
+    <div id="exercise-container"></div>
+</div>
+
+<script>
+    const exercises = [
+        { active: "Учитель исправляет ошибку.", target: ["Ошибка,", "исправляемая", "учителем"] },
+        { active: "Студент читает книгу.", target: ["Книга,", "читаемая", "студентом"] },
+        { active: "Люди планируют встречи.", target: ["Встречи,", "планируемые", "людьми"] },
+        { active: "Студенты изучают язык.", target: ["Язык,", "изучаемый", "студентами"] },
+        { active: "Мама любит сына.", target: ["Сын,", "любимый", "мамой"] },
+        { active: "Дедушка выписывает газету.", target: ["Газета,", "выписываемая", "дедушкой"] },
+        { active: "Рабочие строят дом.", target: ["Дом,", "строимый", "рабочими"] },
+        { active: "Все уважают профессора.", target: ["Профессор,", "уважаемый", "всеми"] },
+        { active: "Художник создает картину.", target: ["Картина,", "создаваемая", "художником"] },
+        { active: "Почта отправляет письмо.", target: ["Письмо,", "отправляемое", "почтой"] },
+        { active: "Ученик проверяет задание.", target: ["Задание,", "проверяемое", "учеником"] },
+        { active: "Мы слышим музыку.", target: ["Музыка,", "слышимая", "нами"] },
+        { active: "Автор редактирует текст.", target: ["Текст,", "редактируемый", "автором"] },
+        { active: "Директор подписывает приказ.", target: ["Приказ,", "подписываемый", "директором"] },
+        { active: "Эксперты контролируют процесс.", target: ["Процесс,", "контролируемый", "экспертами"] },
+        { active: "Мы видим горы.", target: ["Горы,", "видимые", "нами"] },
+        { active: "Музыкант исполняет гимн.", target: ["Гимн,", "исполняемый", "музыкантом"] },
+        { active: "Люди передают информацию.", target: ["Информация,", "передаваемая", "людьми"] },
+        { active: "Семья хранит тайну.", target: ["Тайна,", "хранимая", "семьей"] },
+        { active: "Секретарь называет имена.", target: ["Имена,", "называемые", "секретарем"] }
+    ];
+
+    function shuffle(array) {
+        return array.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function createExercise() {
+        const container = document.getElementById('exercise-container');
+        
+        exercises.forEach((ex, idx) => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${idx}`;
+
+            const shuffled = shuffle(ex.target);
+
+            card.innerHTML = `
+                <div class="active-sentence">„${ex.active}“</div>
+                <div class="dropzone" id="dropzone-${idx}" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div class="chip-pool" id="pool-${idx}" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    ${shuffled.map((word, wIdx) => `<div class="word-chip" draggable="true" ondragstart="drag(event)" id="chip-${idx}-${wIdx}">${word}</div>`).join('')}
+                </div>
+                <div class="button-group">
+                    <button class="btn-reset" onclick="resetTask(${idx})">Zurücksetzen</button>
+                    <button class="btn-solution" onclick="showSolution(${idx})">Lösung anzeigen</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const chip = document.getElementById(data);
+        const target = ev.target.closest('.dropzone') || ev.target.closest('.chip-pool');
+        
+        if (target) {
+            target.appendChild(chip);
+            validate(target.closest('.task-card'));
+        }
+    }
+
+    function validate(card) {
+        const idx = card.id.split('-')[1];
+        const dropzone = card.querySelector('.dropzone');
+        const chips = Array.from(dropzone.querySelectorAll('.word-chip'));
+        const currentOrder = chips.map(c => c.innerText);
+        const correctOrder = exercises[idx].target;
+
+        dropzone.classList.remove('correct', 'incorrect');
+
+        if (currentOrder.length === 0) return;
+
+        let isCorrectSoFar = true;
+        for (let i = 0; i < currentOrder.length; i++) {
+            if (currentOrder[i] !== correctOrder[i]) {
+                isCorrectSoFar = false;
+                break;
+            }
+        }
+
+        if (isCorrectSoFar) {
+            if (currentOrder.length === correctOrder.length) {
+                dropzone.classList.add('correct');
+            }
+        } else {
+            dropzone.classList.add('incorrect');
+        }
+    }
+
+    window.resetTask = function(idx) {
+        const card = document.getElementById(`task-${idx}`);
+        const pool = document.getElementById(`pool-${idx}`);
+        const dropzone = document.getElementById(`dropzone-${idx}`);
+        const chips = Array.from(card.querySelectorAll('.word-chip'));
+        
+        dropzone.classList.remove('correct', 'incorrect');
+        chips.forEach(c => pool.appendChild(c));
+        
+        // Reshuffle pool
+        const shuffledChips = shuffle(Array.from(pool.children));
+        pool.innerHTML = '';
+        shuffledChips.forEach(c => pool.appendChild(c));
+    };
+
+    window.showSolution = function(idx) {
+        const card = document.getElementById(`task-${idx}`);
+        const dropzone = document.getElementById(`dropzone-${idx}`);
+        const targetWords = exercises[idx].target;
+        
+        // Find all chips belonging to this task
+        const chips = Array.from(card.querySelectorAll('.word-chip'));
+        
+        // Clear dropzone
+        dropzone.innerHTML = '';
+        
+        // Sort chips according to solution and place them
+        targetWords.forEach(word => {
+            const foundChip = chips.find(c => c.innerText === word);
+            if (foundChip) dropzone.appendChild(foundChip);
+        });
+        
+        dropzone.classList.add('correct');
+        dropzone.classList.remove('incorrect');
+    };
+
+    createExercise();
+</script>
+
+</body>
+</html>
