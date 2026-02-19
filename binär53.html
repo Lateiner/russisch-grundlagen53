@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Logik-Check</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box {
+            background-color: #e8f4fd;
+            padding: 20px;
+            border-left: 6px solid var(--secondary-color);
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .task-card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .verb-info {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .decision-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-decision {
+            padding: 10px 25px;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.2s;
+            flex: 1;
+            max-width: 150px;
+            text-align: center;
+        }
+
+        .btn-decision:hover {
+            border-color: var(--secondary-color);
+            background: #f0f8ff;
+        }
+
+        .btn-decision.correct {
+            background-color: var(--success-color) !important;
+            color: white !important;
+            border-color: #1e8449 !important;
+        }
+
+        .btn-decision.incorrect {
+            background-color: var(--error-color) !important;
+            color: white !important;
+            border-color: #a93226 !important;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .control-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-solution { background-color: var(--secondary-color); color: white; }
+        .control-btn:hover { opacity: 0.8; }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .decision-row { flex-direction: column; align-items: stretch; }
+            .btn-decision { max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+
+    <div class="intro-box">
+        <h3>Logik-Check: Wann ist die Bildung möglich?</h3>
+        <p>Ein passives Partizip Präsens kann nur gebildet werden, wenn das Verb:</p>
+        <ol>
+            <li>im <strong>unvollendeten Aspekt (НСВ)</strong> steht.</li>
+            <li><strong>transitiv</strong> ist (ein Objekt im Akkusativ ohne Präposition regiert).</li>
+        </ol>
+        <p>Entscheide für die folgenden Verben: Ist die Bildung möglich?</p>
+    </div>
+
+    <div id="exercise-list"></div>
+
+</div>
+
+<script>
+    const verbs = [
+        { word: "Читать (lesen)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Пойти (hingehen)", aspect: "СВ", transitive: false, possible: "Nein" },
+        { word: "Любить (lieben)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Идти (gehen)", aspect: "НСВ", transitive: false, possible: "Nein" },
+        { word: "Видеть (sehen)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Сказать (sagen)", aspect: "СВ", transitive: true, possible: "Nein" },
+        { word: "Гулять (spazieren)", aspect: "НСВ", transitive: false, possible: "Nein" },
+        { word: "Строить (bauen)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Написать (schreiben)", aspect: "СВ", transitive: true, possible: "Nein" },
+        { word: "Спать (schlafen)", aspect: "НСВ", transitive: false, possible: "Nein" },
+        { word: "Пить (trinken)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Купить (kaufen)", aspect: "СВ", transitive: true, possible: "Nein" },
+        { word: "Получать (erhalten)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Жить (leben)", aspect: "НСВ", transitive: false, possible: "Nein" },
+        { word: "Обсуждать (besprechen)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Решить (lösen/entscheiden)", aspect: "СВ", transitive: true, possible: "Nein" },
+        { word: "Понимать (verstehen)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Работать (arbeiten)", aspect: "НСВ", transitive: false, possible: "Nein" },
+        { word: "Создавать (erschaffen)", aspect: "НСВ", transitive: true, possible: "Ja" },
+        { word: "Улыбаться (lächeln)", aspect: "НСВ", transitive: false, possible: "Nein" }
+    ];
+
+    function initExercises() {
+        const list = document.getElementById('exercise-list');
+        verbs.forEach((v, idx) => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${idx}`;
+            card.innerHTML = `
+                <div class="verb-info">${idx + 1}. ${v.word}</div>
+                <div class="decision-row">
+                    <span>Bildung möglich?</span>
+                    <button class="btn-decision" onclick="makeDecision(this, 'Ja', '${v.possible}', ${idx})">Ja</button>
+                    <button class="btn-decision" onclick="makeDecision(this, 'Nein', '${v.possible}', ${idx})">Nein</button>
+                </div>
+                <div class="button-group">
+                    <button class="control-btn btn-reset" onclick="resetTask(${idx})">Zurücksetzen</button>
+                    <button class="control-btn btn-solution" onclick="showSolution(${idx}, '${v.possible}')">Lösung anzeigen</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    window.makeDecision = function(btn, choice, correct, idx) {
+        const card = document.getElementById(`task-${idx}`);
+        const buttons = card.querySelectorAll('.btn-decision');
+        
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+
+        if (choice === correct) {
+            btn.classList.add('correct');
+        } else {
+            btn.classList.add('incorrect');
+        }
+    };
+
+    window.resetTask = function(idx) {
+        const card = document.getElementById(`task-${idx}`);
+        const buttons = card.querySelectorAll('.btn-decision');
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+    };
+
+    window.showSolution = function(idx, correct) {
+        const card = document.getElementById(`task-${idx}`);
+        const buttons = card.querySelectorAll('.btn-decision');
+        
+        buttons.forEach(b => {
+            b.classList.remove('correct', 'incorrect');
+            if (b.innerText === correct) {
+                b.classList.add('correct');
+            }
+        });
+    };
+
+    initExercises();
+</script>
+
+</body>
+</html>
