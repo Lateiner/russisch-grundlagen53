@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Passive Partizipien Präsens</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box {
+            background-color: #eef2f7;
+            padding: 25px;
+            border-left: 6px solid var(--secondary-color);
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+        .task-card {
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin-bottom: 35px;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .task-card:hover {
+            border-color: var(--secondary-color);
+        }
+
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .btn-reset { background-color: #7f8c8d; color: white; }
+        .btn-solution { background-color: var(--success-color); color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .options-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin: 15px 0; 
+        }
+
+        .radio-option {
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            display: block;
+        }
+
+        .radio-option.correct {
+            background-color: #d4edda;
+            border-color: var(--success-color);
+            color: #155724;
+        }
+
+        .radio-option.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--error-color);
+            color: #721c24;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid var(--border-color);
+            font-size: 1em;
+            outline: none;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        select.correct { border-color: var(--success-color); background-color: #d4edda; }
+        select.incorrect { border-color: var(--error-color); background-color: #f8d7da; }
+
+        .draggable-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f1f2f6;
+            border-radius: 8px;
+        }
+
+        .draggable {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--secondary-color);
+            border-radius: 4px;
+            cursor: grab;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .dropzone {
+            display: inline-block;
+            min-width: 150px;
+            min-height: 35px;
+            border-bottom: 3px dashed var(--secondary-color);
+            margin: 0 5px;
+            vertical-align: middle;
+            text-align: center;
+            padding: 2px 10px;
+            transition: all 0.3s;
+        }
+
+        .dropzone.correct { 
+            border-bottom-style: solid; 
+            border-bottom-color: var(--success-color); 
+            color: var(--success-color); 
+            font-weight: bold;
+        }
+
+        .dropzone.incorrect { 
+            border-bottom-style: solid; 
+            border-bottom-color: var(--error-color); 
+            color: var(--error-color); 
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+
+    <div class="intro-box">
+        <h3>Bildung und Verwendung passiver Partizipien Präsens</h3>
+        <p>Diese Partizipien beschreiben Handlungen, die im Moment an einem Objekt vollzogen werden. Sie werden nur von <strong>transitiven Verben</strong> im <strong>unvollendeten Aspekt (НСВ)</strong> gebildet.</p>
+        <ul>
+            <li><strong>1. Konjugation:</strong> мы-Form + Endung (Suffix <strong>-ем-</strong>). Beispiel: читать → читаем → читаемый.</li>
+            <li><strong>2. Konjugation:</strong> wir-Form + Endung (Suffix <strong>-им-</strong>). Beispiel: любить → любим → любимый.</li>
+            <li><strong>Ausnahme:</strong> Verben auf -авать behalten das -ва-. Beispiel: давать → даваемый.</li>
+            <li>Der Handelnde steht im <strong>Instrumental (5. Fall)</strong>.</li>
+        </ul>
+    </div>
+
+    <!-- Aufgabe 1 -->
+    <div class="task-card" id="task1">
+        <h3>1. Suffix-Wahl: Welches Suffix erhält das Verb „изучать“ (1. Konj.)?</h3>
+        <div class="options-list">
+            <label class="radio-option"><input type="radio" name="q1" value="incorrect" onchange="evalRadio(this)"> -им-</label>
+            <label class="radio-option" data-correct="true"><input type="radio" name="q1" value="correct" onchange="evalRadio(this)"> -ем-</label>
+        </div>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task1')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveRadio('task1')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 2 -->
+    <div class="task-card" id="task2">
+        <h3>2. Suffix-Wahl: Welches Suffix erhält das Verb „слышать“ (2. Konj.)?</h3>
+        <div class="options-list">
+            <label class="radio-option" data-correct="true"><input type="radio" name="q2" value="correct" onchange="evalRadio(this)"> -им-</label>
+            <label class="radio-option"><input type="radio" name="q2" value="incorrect" onchange="evalRadio(this)"> -ем-</label>
+        </div>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task2')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveRadio('task2')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 3 -->
+    <div class="task-card" id="task3">
+        <h3>3. Genus-Anpassung: „Статья (fem.), ... переводчиком.“</h3>
+        <select onchange="evalSelect(this)" data-answer="переводимая">
+            <option value="">--Bitte wählen--</option>
+            <option value="переводимый">переводимый</option>
+            <option value="переводимая">переводимая</option>
+            <option value="переводимое">переводимое</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task3')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task3')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 4 -->
+    <div class="task-card" id="task4">
+        <h3>4. Genus-Anpassung: „Письмо (neutr.), ... почтой.“</h3>
+        <select onchange="evalSelect(this)" data-answer="отправляемое">
+            <option value="">--Bitte wählen--</option>
+            <option value="отправляемый">отправляемый</option>
+            <option value="отправляемая">отправляемая</option>
+            <option value="отправляемое">отправляемое</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task4')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task4')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 5 -->
+    <div class="task-card" id="task5">
+        <h3>5. Ausnahme -авать: Das Partizip von „продавать“ (verkaufen)</h3>
+        <select onchange="evalSelect(this)" data-answer="продаваемый">
+            <option value="">--Bitte wählen--</option>
+            <option value="продаемый">продаемый</option>
+            <option value="продаваемый">продаваемый</option>
+            <option value="продаимый">продаимый</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task5')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task5')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 6 -->
+    <div class="task-card" id="task6">
+        <h3>6. Instrumental: „Текст, читаемый ... (vom Lehrer).“</h3>
+        <select onchange="evalSelect(this)" data-answer="учителем">
+            <option value="">--Bitte wählen--</option>
+            <option value="учитель">учитель</option>
+            <option value="учителя">учителя</option>
+            <option value="учителем">учителем</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task6')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task6')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 7-10 -->
+    <div class="task-card" id="task-drag1">
+        <h3>7-10. Zuordnung: Ziehe das Partizip zum passenden Verb.</h3>
+        <div class="draggable-container">
+            <div class="draggable" draggable="true" id="drag9">создаваемый</div>
+            <div class="draggable" draggable="true" id="drag10">видимый</div>
+            <div class="draggable" draggable="true" id="drag7">любимый</div>
+            <div class="draggable" draggable="true" id="drag8">используемый</div>
+        </div>
+        <p>использовать → <span class="dropzone" data-answer="используемый"></span></p>
+        <p>видеть → <span class="dropzone" data-answer="видимый"></span></p>
+        <p>любить → <span class="dropzone" data-answer="любимый"></span></p>
+        <p>создавать → <span class="dropzone" data-answer="создаваемый"></span></p>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task-drag1')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveDrag('task-drag1')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 11 -->
+    <div class="task-card" id="task11">
+        <h3>11. Plural-Check: „Книги (pl.), ... студентами.“</h3>
+        <select onchange="evalSelect(this)" data-answer="читаемые">
+            <option value="">--Bitte wählen--</option>
+            <option value="читаемый">читаемый</option>
+            <option value="читаемая">читаемая</option>
+            <option value="читаемые">читаемые</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task11')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task11')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 12 -->
+    <div class="task-card" id="task12">
+        <h3>12. Bedeutung: Was bedeutet „уважаемый“?</h3>
+        <select onchange="evalSelect(this)" data-answer="geehrt / respektiert">
+            <option value="">--Bitte wählen--</option>
+            <option value="geehrt / respektiert">geehrt / respektiert</option>
+            <option value="vergessen">vergessen</option>
+            <option value="geschrieben">geschrieben</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task12')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task12')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 13 -->
+    <div class="task-card" id="task13">
+        <h3>13. Transitivität: Kann man von „идти“ (gehen) ein Passiv bilden?</h3>
+        <select onchange="evalSelect(this)" data-answer="Nein">
+            <option value="">--Bitte wählen--</option>
+            <option value="Ja">Ja</option>
+            <option value="Nein">Nein</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task13')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task13')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 14-17 -->
+    <div class="task-card" id="task-drag2">
+        <h3>14-17. Wer handelt? (Instrumental zuordnen)</h3>
+        <div class="draggable-container">
+            <div class="draggable" draggable="true" id="drag17">людьми</div>
+            <div class="draggable" draggable="true" id="drag15">автором</div>
+            <div class="draggable" draggable="true" id="drag14">мамой</div>
+            <div class="draggable" draggable="true" id="drag16">врачом</div>
+        </div>
+        <p>Von der Mutter geliebt → любимый <span class="dropzone" data-answer="мамой"></span></p>
+        <p>Von Menschen geplant → планируемый <span class="dropzone" data-answer="людьми"></span></p>
+        <p>Vom Autor geschaffen → создаваемый <span class="dropzone" data-answer="автором"></span></p>
+        <p>Vom Arzt untersucht → изучаемый <span class="dropzone" data-answer="врачом"></span></p>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task-drag2')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveDrag('task-drag2')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 18 -->
+    <div class="task-card" id="task18">
+        <h3>18. Aspekt: Von welchem Verb bildet man „произносимый“ (ausgesprochen)?</h3>
+        <select onchange="evalSelect(this)" data-answer="произносить (НСВ)">
+            <option value="">--Bitte wählen--</option>
+            <option value="произнести (СВ)">произнести (СВ)</option>
+            <option value="произносить (НСВ)">произносить (НСВ)</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task18')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task18')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 19 -->
+    <div class="task-card" id="task19">
+        <h3>19. Suffix-Check: „хранить“ → wir „храним“ → ...</h3>
+        <select onchange="evalSelect(this)" data-answer="хранимый">
+            <option value="">--Bitte wählen--</option>
+            <option value="хранимый">хранимый</option>
+            <option value="хранемый">хранемый</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task19')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task19')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 20 -->
+    <div class="task-card" id="task20">
+        <h3>20. Satzbau: „Die von uns untersuchte Frage.“</h3>
+        <select onchange="evalSelect(this)" data-answer="Изучаемый нами вопрос.">
+            <option value="">--Bitte wählen--</option>
+            <option value="Изучаемый нами вопрос.">Изучаемый нами вопрос.</option>
+            <option value="Вопрос изучающий нас.">Вопрос изучающий нас.</option>
+        </select>
+        <div class="button-group">
+            <button class="btn-reset" onclick="resetTask('task20')">Zurücksetzen</button>
+            <button class="btn-solution" onclick="solveSelect('task20')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- EVALUATION LOGIC ---
+
+    function evalRadio(radio) {
+        const container = radio.closest('.task-card');
+        const labels = container.querySelectorAll('.radio-option');
+        labels.forEach(label => {
+            label.classList.remove('correct', 'incorrect');
+            const input = label.querySelector('input');
+            if (input.checked) {
+                if (label.hasAttribute('data-correct')) {
+                    label.classList.add('correct');
+                } else {
+                    label.classList.add('incorrect');
+                }
+            }
+        });
+    }
+
+    function evalSelect(select) {
+        const correct = select.getAttribute('data-answer');
+        select.classList.remove('correct', 'incorrect');
+        if (select.value === "") return;
+        if (select.value === correct) {
+            select.classList.add('correct');
+        } else {
+            select.classList.add('incorrect');
+        }
+    }
+
+    // --- DRAG AND DROP ---
+
+    let draggedItem = null;
+
+    document.querySelectorAll('.draggable').forEach(item => {
+        item.addEventListener('dragstart', function() {
+            draggedItem = this;
+            setTimeout(() => this.style.opacity = '0.5', 0);
+        });
+        item.addEventListener('dragend', function() {
+            draggedItem = null;
+            this.style.opacity = '1';
+        });
+    });
+
+    document.querySelectorAll('.dropzone').forEach(zone => {
+        zone.addEventListener('dragover', e => e.preventDefault());
+        zone.addEventListener('drop', function() {
+            if (draggedItem) {
+                this.textContent = draggedItem.textContent;
+                const correct = this.getAttribute('data-answer');
+                this.classList.remove('correct', 'incorrect');
+                if (this.textContent === correct) {
+                    this.classList.add('correct');
+                } else {
+                    this.classList.add('incorrect');
+                }
+            }
+        });
+    });
+
+    // --- BUTTON ACTIONS ---
+
+    function resetTask(id) {
+        const task = document.getElementById(id);
+        
+        task.querySelectorAll('.radio-option').forEach(l => {
+            l.classList.remove('correct', 'incorrect');
+            l.querySelector('input').checked = false;
+        });
+
+        task.querySelectorAll('select').forEach(s => {
+            s.value = "";
+            s.classList.remove('correct', 'incorrect');
+        });
+
+        task.querySelectorAll('.dropzone').forEach(z => {
+            z.textContent = "";
+            z.classList.remove('correct', 'incorrect');
+        });
+    }
+
+    function solveRadio(id) {
+        const task = document.getElementById(id);
+        const correctLabel = task.querySelector('.radio-option[data-correct="true"]');
+        correctLabel.querySelector('input').checked = true;
+        evalRadio(correctLabel.querySelector('input'));
+    }
+
+    function solveSelect(id) {
+        const task = document.getElementById(id);
+        const select = task.querySelector('select');
+        select.value = select.getAttribute('data-answer');
+        evalSelect(select);
+    }
+
+    function solveDrag(id) {
+        const task = document.getElementById(id);
+        task.querySelectorAll('.dropzone').forEach(z => {
+            z.textContent = z.getAttribute('data-answer');
+            z.classList.add('correct');
+            z.classList.remove('incorrect');
+        });
+    }
+</script>
+
+</body>
+</html>
