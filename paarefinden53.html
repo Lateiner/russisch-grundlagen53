@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch-Übung: Paare finden (Passiv-Partizip)</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .intro-box {
+            background-color: #e8f6fe;
+            padding: 15px;
+            border-left: 6px solid var(--secondary);
+            margin-bottom: 25px;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+
+        .matching-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card {
+            padding: 15px;
+            background: #fff;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            font-weight: 500;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05em;
+        }
+
+        .card:hover {
+            border-color: var(--secondary);
+            background-color: #f0f8ff;
+            transform: translateY(-2px);
+        }
+
+        .card.selected {
+            border-color: var(--secondary);
+            background-color: #e1f5fe;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
+        }
+
+        .card.correct-match {
+            background-color: #d4edda;
+            border-color: var(--success);
+            cursor: default;
+        }
+
+        .card.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--error);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-sol { background-color: var(--success); color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .matching-grid { grid-template-columns: 1fr; }
+            .card { min-height: 50px; font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+
+    <div class="intro-box">
+        <strong>Semantik & Übersetzung:</strong> Ordne die Paare einander zu. 
+        Klicke erst ein russisches Partizip an und dann die deutsche Bedeutung. 
+        <br>Bei „Lösung anzeigen“ erhält jedes Paar eine <strong>eigene Farbe</strong>.
+    </div>
+
+    <div class="matching-grid">
+        <div class="column" id="ru-col"></div>
+        <div class="column" id="de-col"></div>
+    </div>
+
+    <div class="button-group">
+        <button class="btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="btn-sol" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    // Daten mit individuellen Farben für die Lösung
+    const pairs = [
+        { ru: "любимый всеми", de: "von allen geliebt", id: 1, color: "#FFEBEE" },
+        { ru: "читаемая книга", de: "das gelesene Buch", id: 2, color: "#E3F2FD" },
+        { ru: "изучаемый вопрос", de: "die untersuchte Frage", id: 3, color: "#E8F5E9" },
+        { ru: "слышимая музыка", de: "die hörbare Musik", id: 4, color: "#FFF3E0" },
+        { ru: "уважаемый человек", de: "ein geachteter Mensch", id: 5, color: "#F3E5F5" },
+        { ru: "создаваемый проект", de: "das entstehende Projekt", id: 6, color: "#F1F8E9" },
+        { ru: "хранимая тайна", de: "das bewahrte Geheimnis", id: 7, color: "#E0F7FA" },
+        { ru: "используемый метод", de: "die angewandte Methode", id: 8, color: "#FFFDE7" },
+        { ru: "обсуждаемая тема", de: "das besprochene Thema", id: 9, color: "#EFEBE9" },
+        { ru: "получаемое письмо", de: "der erhaltene Brief", id: 10, color: "#ECEFF1" }
+    ];
+
+    let selectedRu = null;
+    let selectedDe = null;
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function initExercise() {
+        const ruCol = document.getElementById('ru-col');
+        const deCol = document.getElementById('de-col');
+        ruCol.innerHTML = '';
+        deCol.innerHTML = '';
+
+        const shuffledRu = shuffle([...pairs]);
+        const shuffledDe = shuffle([...pairs]);
+
+        shuffledRu.forEach(pair => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.textContent = pair.ru;
+            card.dataset.id = pair.id;
+            card.onclick = () => selectCard(card, 'ru');
+            ruCol.appendChild(card);
+        });
+
+        shuffledDe.forEach(pair => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.textContent = pair.de;
+            card.dataset.id = pair.id;
+            card.onclick = () => selectCard(card, 'de');
+            deCol.appendChild(card);
+        });
+    }
+
+    function selectCard(card, lang) {
+        if (card.classList.contains('correct-match')) return;
+
+        // Fehlerzustand löschen
+        document.querySelectorAll('.card.incorrect').forEach(c => c.classList.remove('incorrect'));
+
+        if (lang === 'ru') {
+            if (selectedRu) selectedRu.classList.remove('selected');
+            selectedRu = card;
+            card.classList.add('selected');
+        } else {
+            if (selectedDe) selectedDe.classList.remove('selected');
+            selectedDe = card;
+            card.classList.add('selected');
+        }
+
+        if (selectedRu && selectedDe) {
+            if (selectedRu.dataset.id === selectedDe.dataset.id) {
+                selectedRu.classList.replace('selected', 'correct-match');
+                selectedDe.classList.replace('selected', 'correct-match');
+                selectedRu = null;
+                selectedDe = null;
+            } else {
+                selectedRu.classList.add('incorrect');
+                selectedDe.classList.add('incorrect');
+                const sR = selectedRu;
+                const sD = selectedDe;
+                setTimeout(() => {
+                    sR.classList.remove('selected', 'incorrect');
+                    sD.classList.remove('selected', 'incorrect');
+                }, 600);
+                selectedRu = null;
+                selectedDe = null;
+            }
+        }
+    }
+
+    function resetExercise() {
+        selectedRu = null;
+        selectedDe = null;
+        initExercise();
+    }
+
+    function showSolution() {
+        const ruCol = document.getElementById('ru-col');
+        const deCol = document.getElementById('de-col');
+        ruCol.innerHTML = '';
+        deCol.innerHTML = '';
+
+        // Paare sortiert ausgeben mit individuellen Farben
+        pairs.forEach(pair => {
+            const rCard = document.createElement('div');
+            rCard.className = 'card correct-match';
+            rCard.textContent = pair.ru;
+            rCard.style.backgroundColor = pair.color;
+            rCard.style.borderColor = "#ccc";
+            ruCol.appendChild(rCard);
+
+            const dCard = document.createElement('div');
+            dCard.className = 'card correct-match';
+            dCard.textContent = pair.de;
+            dCard.style.backgroundColor = pair.color;
+            dCard.style.borderColor = "#ccc";
+            deCol.appendChild(dCard);
+        });
+    }
+
+    initExercise();
+</script>
+
+</body>
+</html>
