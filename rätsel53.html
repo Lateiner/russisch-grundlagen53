@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch-Übung: Das -ва- Rätsel</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f39c12;
+            --bg: #fdfdfd;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--primary);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: var(--primary); }
+        .subtitle { text-align: center; color: var(--secondary); margin-bottom: 30px; font-weight: bold; }
+
+        .intro-box {
+            background: #fff8e1;
+            padding: 20px;
+            border-left: 6px solid var(--warning);
+            border-radius: 8px;
+            margin-bottom: 35px;
+        }
+
+        .rule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            background: #fff;
+        }
+
+        .rule-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .task-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: #fafafa;
+        }
+
+        .verb-display {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .compare-box {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-style: italic;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary);
+            background: #e1f5fe;
+        }
+
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: #1e8449 !important;
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--error) !important;
+            color: white !important;
+            border-color: #a93226 !important;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button.ctrl-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-sol { background: var(--secondary); color: white; }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .compare-box { flex-direction: column; gap: 5px; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+    <div class="subtitle">Das „-ва-“ Rätsel (Spezial-Übung)</div>
+
+    <div class="intro-box">
+        <h3>Vorsicht Stolperstein!</h3>
+        <p>Normalerweise nutzen wir für das Partizip die Präsensform (мы-Form). Aber bei Verben auf <strong>-авать</strong> gibt es eine Besonderheit:</p>
+        <table class="rule-table">
+            <tr>
+                <td>Präsens:</td>
+                <td>мы да<strong>ём</strong></td>
+                <td>(Suffix -ва- verschwindet)</td>
+            </tr>
+            <tr>
+                <td>Partizip:</td>
+                <td>да<strong>ва</strong>емый</td>
+                <td>(Suffix -ва- <strong>bleibt</strong>!)</td>
+            </tr>
+        </table>
+        <p>Wähle die richtige Partizip-Form aus.</p>
+    </div>
+
+    <div id="tasks-container"></div>
+
+</div>
+
+<script>
+    const taskData = [
+        { verb: "давать (geben)", wir: "мы даём", correct: "даваемый", wrong: "даемый" },
+        { verb: "создавать (erschaffen)", wir: "мы создаём", correct: "создаваемый", wrong: "создаемый" },
+        { verb: "передавать (übertragen)", wir: "мы передаём", correct: "передаваемый", wrong: "передаемый" },
+        { verb: "продавать (verkaufen)", wir: "мы продаём", correct: "продаваемый", wrong: "продаемый" },
+        { verb: "преподавать (unterrichten)", wir: "мы преподаём", correct: "преподаваемый", wrong: "преподаемый" },
+        { verb: "узнавать (erkennen)", wir: "мы узнаём", correct: "узнаваемый", wrong: "узнаемый" },
+        { verb: "издавать (herausgeben)", wir: "мы издаём", correct: "издаваемый", wrong: "издаемый" },
+        { verb: "признавать (anerkennen)", wir: "мы признаём", correct: "признаваемый", wrong: "признаемый" },
+        { verb: "выдавать (ausgeben)", wir: "мы выдаём", correct: "выдаваемый", wrong: "выдаемый" },
+        { verb: "сдавать (abgeben)", wir: "мы сдаём", correct: "сдаваемый", wrong: "сдаемый" },
+        { verb: "подавать (servieren/reichen)", wir: "мы подаём", correct: "подаваемый", wrong: "подаемый" },
+        { verb: "осознавать (bewusst werden)", wir: "мы осознаём", correct: "осознаваемый", wrong: "осознаемый" },
+        { verb: "развивать (entwickeln)", wir: "мы развиваем", correct: "развиваемый", wrong: "развиемый" },
+        { verb: "вставать (aufstehen)", wir: "мы встаём", correct: "вставаемый*", wrong: "встаемый" }, // theoretisch, oft intransitiv gebraucht
+        { verb: "задавать (aufgeben/stellen)", wir: "мы задаём", correct: "задаваемый", wrong: "задаемый" },
+        { verb: "надавать (verabreichen)", wir: "мы надаём", correct: "надаваемый", wrong: "надаемый" },
+        { verb: "поддавать (nachgeben/erhöhen)", wir: "мы поддаём", correct: "поддаваемый", wrong: "поддаемый" },
+        { verb: "сознавать (eingestehen)", wir: "мы сознаём", correct: "сознаваемый", wrong: "сознаемый" },
+        { verb: "отдавать (zurückgeben)", wir: "мы отдаём", correct: "отдаваемый", wrong: "отдаемый" },
+        { verb: "переиздавать (neu auflegen)", wir: "мы переиздаём", correct: "переиздаваемый", wrong: "переиздаемый" }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('tasks-container');
+        taskData.forEach((task, idx) => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${idx}`;
+
+            // Optionen mischen
+            const options = [task.correct, task.wrong].sort(() => Math.random() - 0.5);
+
+            card.innerHTML = `
+                <div class="verb-display">${idx + 1}. Verb: ${task.verb}</div>
+                <div class="compare-box">
+                    <span>Präsens: ${task.wir}</span>
+                    <span>→ Partizip: ?</span>
+                </div>
+                <div class="options-grid">
+                    ${options.map(opt => `
+                        <button class="option-btn" onclick="checkAns(this, '${opt}', '${task.correct}', ${idx})">${opt}</button>
+                    `).join('')}
+                </div>
+                <div class="button-group">
+                    <button class="ctrl-btn btn-reset" onclick="resetTask(${idx})">Zurücksetzen</button>
+                    <button class="ctrl-btn btn-sol" onclick="showSol(${idx}, '${task.correct}')">Lösung</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.checkAns = function(btn, choice, correct, idx) {
+        const buttons = document.getElementById(`task-${idx}`).querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+
+        if (choice === correct) {
+            btn.classList.add('correct');
+        } else {
+            btn.classList.add('incorrect');
+        }
+    };
+
+    window.resetTask = function(idx) {
+        const buttons = document.getElementById(`task-${idx}`).querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+    };
+
+    window.showSol = function(idx, correct) {
+        const buttons = document.getElementById(`task-${idx}`).querySelectorAll('.option-btn');
+        buttons.forEach(b => {
+            b.classList.remove('correct', 'incorrect');
+            if (b.innerText === correct) {
+                b.classList.add('correct');
+            }
+        });
+    };
+
+    renderTasks();
+</script>
+
+</body>
+</html>
