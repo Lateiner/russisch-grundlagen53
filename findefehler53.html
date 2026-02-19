@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch-Übung: Fehler-Fahnder</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f39c12;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; margin-bottom: 5px; font-size: 1.8em; }
+        .subtitle { text-align: center; color: var(--secondary); margin-bottom: 25px; font-weight: bold; }
+
+        .intro-box {
+            background: #fff3e0;
+            padding: 15px;
+            border-left: 6px solid var(--warning);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .task-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            background: #fff;
+        }
+
+        .task-card h3 {
+            margin-top: 0;
+            font-size: 1.1em;
+            color: var(--primary);
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 10px;
+        }
+
+        .word-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .word-tag {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .word-tag:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            border-color: var(--secondary);
+        }
+
+        /* Feedback-Styles */
+        .word-tag.selected-correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724;
+        }
+
+        .word-tag.selected-incorrect {
+            background-color: #f8d7da !important;
+            border-color: var(--error) !important;
+            color: #721c24;
+        }
+
+        .word-tag.solution-highlight {
+            box-shadow: 0 0 0 4px var(--warning);
+            border-color: var(--warning);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: 0.2s;
+        }
+
+        .btn-reset { background: #adb5bd; color: white; }
+        .btn-sol { background: var(--secondary); color: white; }
+        button:hover { opacity: 0.9; transform: scale(1.02); }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .word-tag { width: 100%; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+    <div class="subtitle">Fehler-Fahnder: Passive Partizipien Präsens</div>
+
+    <div class="intro-box">
+        <strong>Anleitung:</strong> In jeder Gruppe sind Wörter versteckt, die morphologisch <strong>falsch</strong> gebildet wurden.
+        Klicke nur auf die fehlerhaften Formen!
+    </div>
+
+    <div id="tasks-container"></div>
+</div>
+
+<script>
+    const taskData = [
+        {
+            title: "1. Suffix-Check (1. vs. 2. Konjugation)",
+            words: [
+                { text: "изучаемый", isError: false },
+                { text: "читаимый", isError: true },  // Fehler: изучаемый
+                { text: "называемый", isError: false },
+                { text: "любиемый", isError: true },  // Fehler: любимый
+                { text: "хранимый", isError: false }
+            ]
+        },
+        {
+            title: "2. Die -авать Ausnahmen",
+            words: [
+                { text: "передаемый", isError: true }, // Fehler: передаваемый
+                { text: "создаваемый", isError: false },
+                { text: "создаемый", isError: true },  // Fehler: создаваемый
+                { text: "продаваемый", isError: false },
+                { text: "узнаваемый", isError: false }
+            ]
+        },
+        {
+            title: "3. Zweite Konjugation (Vokale)",
+            words: [
+                { text: "слышимый", isError: false },
+                { text: "слышемый", isError: true },  // Fehler: слышимый
+                { text: "видимый", isError: false },
+                { text: "терпимый", isError: false },
+                { text: "зависимый", isError: false }
+            ]
+        },
+        {
+            title: "4. Verben auf -овать",
+            words: [
+                { text: "используемый", isError: false },
+                { text: "рекомендуемый", isError: false },
+                { text: "организуимый", isError: true }, // Fehler: организуемый
+                { text: "исследуемый", isError: false },
+                { text: "используваемый", isError: true } // Fehler: используемый
+            ]
+        },
+        {
+            title: "5. Rechtschreibung (Stammvokal)",
+            words: [
+                { text: "обсуждаимый", isError: true }, // Fehler: обсуждаемый
+                { text: "проверяемый", isError: false },
+                { text: "выполняемый", isError: false },
+                { text: "исправляимый", isError: true }, // Fehler: исправляемый
+                { text: "изменяемый", isError: false }
+            ]
+        },
+        {
+            title: "6. Transitivitäts-Logik",
+            words: [
+                { text: "идимый", isError: true },   // Fehler: gehen ist intransitiv
+                { text: "любимый", isError: false },
+                { text: "видимый", isError: false },
+                { text: "хранимый", isError: false },
+                { text: "спимый", isError: true }    // Fehler: schlafen ist intransitiv
+            ]
+        },
+        {
+            title: "7. Konsonanten & Stamm",
+            words: [
+                { text: "произносимый", isError: false },
+                { text: "ношаемый", isError: true },  // Fehler: носимый
+                { text: "возимый", isError: false },
+                { text: "носимый", isError: false },
+                { text: "просимый", isError: false }
+            ]
+        },
+        {
+            title: "8. Sonderformen (Historisch)",
+            words: [
+                { text: "ведомый", isError: false },
+                { text: "ведимый", isError: true },  // Fehler: ведомый
+                { text: "движимый", isError: false },
+                { text: "движемый", isError: true },  // Fehler: движимый
+                { text: "искомый", isError: false }
+            ]
+        },
+        {
+            title: "9. Passiv vs. Aktiv-Check",
+            words: [
+                { text: "одеваемый", isError: false },
+                { text: "моющийся", isError: true },  // Fehler: Aktiv-Partizip
+                { text: "забываемый", isError: false },
+                { text: "боящийся", isError: true },  // Fehler: Aktiv/Intransitiv
+                { text: "контролируемый", isError: false }
+            ]
+        },
+        {
+            title: "10. Gemischtes Finale",
+            words: [
+                { text: "ненавидемый", isError: true }, // Fehler: ненавидимый
+                { text: "производимый", isError: false },
+                { text: "решаимый", isError: true },    // Fehler: решаемый
+                { text: "ожидаемый", isError: false },
+                { text: "значимый", isError: false }
+            ]
+        }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('tasks-container');
+        taskData.forEach((group, groupIdx) => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `group-${groupIdx}`;
+            
+            let wordsHTML = group.words.map((word, wordIdx) => `
+                <div class="word-tag" 
+                     id="word-${groupIdx}-${wordIdx}" 
+                     onclick="checkWord(${groupIdx}, ${wordIdx})">
+                    ${word.text}
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <h3>${group.title}</h3>
+                <div class="word-grid">${wordsHTML}</div>
+                <div class="button-group">
+                    <button class="btn-reset" onclick="resetGroup(${groupIdx})">Zurücksetzen</button>
+                    <button class="btn-sol" onclick="showSolution(${groupIdx})">Lösungen zeigen</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.checkWord = function(groupIdx, wordIdx) {
+        const wordData = taskData[groupIdx].words[wordIdx];
+        const wordElement = document.getElementById(`word-${groupIdx}-${wordIdx}`);
+        
+        wordElement.classList.remove('selected-correct', 'selected-incorrect');
+
+        if (wordData.isError) {
+            wordElement.classList.add('selected-correct');
+        } else {
+            wordElement.classList.add('selected-incorrect');
+        }
+    };
+
+    window.resetGroup = function(groupIdx) {
+        const words = document.querySelectorAll(`#group-${groupIdx} .word-tag`);
+        words.forEach(word => {
+            word.classList.remove('selected-correct', 'selected-incorrect', 'solution-highlight');
+        });
+    };
+
+    window.showSolution = function(groupIdx) {
+        const words = taskData[groupIdx].words;
+        words.forEach((word, wordIdx) => {
+            const wordElement = document.getElementById(`word-${groupIdx}-${wordIdx}`);
+            if (word.isError) {
+                wordElement.classList.add('solution-highlight');
+            }
+        });
+    };
+
+    renderTasks();
+</script>
+
+</body>
+</html>
