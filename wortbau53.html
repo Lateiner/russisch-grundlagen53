@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Partizipien-Baukasten</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f0f3f5;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .subtitle { text-align: center; color: var(--secondary); margin-bottom: 30px; font-weight: bold; }
+
+        .intro-box {
+            background: #e1f5fe;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            border-radius: 8px;
+            margin-bottom: 35px;
+        }
+
+        .task-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .baukasten {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        .stem {
+            background: #eee;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-weight: bold;
+        }
+
+        .plus { font-weight: bold; color: var(--secondary); }
+
+        select {
+            padding: 8px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1em;
+            outline: none;
+            background: white;
+            cursor: pointer;
+        }
+
+        select.correct { border-color: var(--success); background-color: #e8f5e9; color: var(--success); }
+        select.incorrect { border-color: var(--error); background-color: #ffebee; color: var(--error); }
+
+        .result-display {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-top: 15px;
+            min-height: 1.5em;
+            color: #7f8c8d;
+        }
+
+        .result-display.complete-correct { color: var(--success); }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-sol { background: var(--success); color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        @media (max-width: 600px) {
+            .baukasten { flex-direction: column; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+    <div class="subtitle">Wortbau-Baukasten: Passive Partizipien Präsens</div>
+
+    <div class="intro-box">
+        <h3>So funktioniert der Baukasten:</h3>
+        <p>Ein passives Partizip Präsens besteht aus drei Teilen:</p>
+        <ol>
+            <li><strong>Verbstamm:</strong> (wird vorgegeben)</li>
+            <li><strong>Suffix:</strong> <strong>-ем-</strong> (1. Konjugation) oder <strong>-им-</strong> (2. Konjugation).</li>
+            <li><strong>Endung:</strong> Richtet sich nach Genus und Numerus (<strong>-ый, -ая, -ое, -ые</strong>).</li>
+        </ol>
+    </div>
+
+    <!-- Aufgaben 1-20 -->
+    <div id="tasks-container"></div>
+
+</div>
+
+<script>
+    const taskData = [
+        { stem: "чита", suffix: "ем", end: "ый", label: "1. lesen (mask.)", type: "1. Konj." },
+        { stem: "люби", suffix: "im", end: "ый", label: "2. lieben (mask.)", type: "2. Konj." },
+        { stem: "изуча", suffix: "ем", end: "ая", label: "3. erlernen (fem.)", type: "1. Konj." },
+        { stem: "вид", suffix: "im", end: "im", label: "4. sehen (mask.)", type: "2. Konj. (Ausnahme)" },
+        { stem: "использу", suffix: "ем", end: "ое", label: "5. nutzen (neutr.)", type: "1. Konj." },
+        { stem: "хран", suffix: "im", end: "ые", label: "6. aufbewahren (pl.)", type: "2. Konj." },
+        { stem: "сообща", suffix: "ем", end: "ый", label: "7. mitteilen (mask.)", type: "1. Konj." },
+        { stem: "проверя", suffix: "ем", end: "ая", label: "8. prüfen (fem.)", type: "1. Konj." },
+        { stem: "слыш", suffix: "im", end: "im", label: "9. hören (mask.)", type: "2. Konj. (Ausnahme)" },
+        { stem: "обсужда", suffix: "ем", end: "ые", label: "10. besprechen (pl.)", type: "1. Konj." },
+        { stem: "создава", suffix: "ем", end: "ый", label: "11. erschaffen (mask.)", type: "Ausnahme -авать" },
+        { stem: "произноси", suffix: "im", end: "ое", label: "12. aussprechen (neutr.)", type: "2. Konj." },
+        { stem: "называ", suffix: "ем", end: "ая", label: "13. nennen (fem.)", type: "1. Konj." },
+        { stem: "стро", suffix: "im", end: "ый", label: "14. bauen (mask.)", type: "2. Konj." },
+        { stem: "получа", suffix: "ем", end: "ые", label: "15. erhalten (pl.)", type: "1. Konj." },
+        { stem: "передава", suffix: "ем", end: "оe", label: "16. übermitteln (neutr.)", type: "Ausnahme -авать" },
+        { stem: "уважа", suffix: "ем", end: "ый", label: "17. achten/respektieren (mask.)", type: "1. Konj." },
+        { stem: "контролиру", suffix: "ем", end: "ые", label: "18. kontrollieren (pl.)", type: "1. Konj." },
+        { stem: "изменя", suffix: "ем", end: "ая", label: "19. ändern (fem.)", type: "1. Konj." },
+        { stem: "освобожда", suffix: "ем", end: "ый", label: "20. befreien (mask.)", type: "1. Konj." }
+    ];
+
+    // Korrektur für die Daten-ID (Suffix im/em Vergleich)
+    const normalizedData = taskData.map((t, idx) => ({
+        ...t,
+        suffix: t.suffix === "im" ? "им" : "ем",
+        id: idx
+    }));
+
+    function renderTasks() {
+        const container = document.getElementById('tasks-container');
+        normalizedData.forEach(task => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${task.id}`;
+            card.innerHTML = `
+                <h3>${task.label} <small style="color:#95a5a6; font-weight:normal;">(${task.type})</small></h3>
+                <div class="baukasten">
+                    <span class="stem">${task.stem}</span>
+                    <span class="plus">+</span>
+                    <select class="suffix-select" onchange="evaluateBaukasten(${task.id})">
+                        <option value="">Suffix</option>
+                        <option value="ем">ем</option>
+                        <option value="им">им</option>
+                    </select>
+                    <span class="plus">+</span>
+                    <select class="end-select" onchange="evaluateBaukasten(${task.id})">
+                        <option value="">Endung</option>
+                        <option value="ый">ый (m)</option>
+                        <option value="ая">ая (f)</option>
+                        <option value="ое">ое (n)</option>
+                        <option value="ые">ые (pl)</option>
+                    </select>
+                </div>
+                <div class="result-display" id="res-${task.id}">...</div>
+                <div class="button-group">
+                    <button class="btn-reset" onclick="resetBaukasten(${task.id})">Zurücksetzen</button>
+                    <button class="btn-sol" onclick="solveBaukasten(${task.id})">Lösung</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.evaluateBaukasten = function(id) {
+        const card = document.getElementById(`task-${id}`);
+        const suffixSel = card.querySelector('.suffix-select');
+        const endSel = card.querySelector('.end-select');
+        const display = document.getElementById(`res-${id}`);
+        const data = normalizedData[id];
+
+        let sVal = suffixSel.value;
+        let eVal = endSel.value;
+
+        // Einzel-Validierung Suffix
+        if (sVal !== "") {
+            suffixSel.className = (sVal === data.suffix) ? "suffix-select correct" : "suffix-select incorrect";
+        } else { suffixSel.className = "suffix-select"; }
+
+        // Einzel-Validierung Endung
+        if (eVal !== "") {
+            endSel.className = (eVal === data.end) ? "end-select correct" : "end-select incorrect";
+        } else { endSel.className = "end-select"; }
+
+        // Gesamt-Anzeige
+        if (sVal && eVal) {
+            display.textContent = data.stem + sVal + eVal;
+            if (sVal === data.suffix && eVal === data.end) {
+                display.className = "result-display complete-correct";
+            } else {
+                display.className = "result-display";
+            }
+        } else {
+            display.textContent = "...";
+            display.className = "result-display";
+        }
+    }
+
+    window.resetBaukasten = function(id) {
+        const card = document.getElementById(`task-${id}`);
+        card.querySelector('.suffix-select').value = "";
+        card.querySelector('.end-select').value = "";
+        card.querySelector('.suffix-select').className = "suffix-select";
+        card.querySelector('.end-select').className = "end-select";
+        document.getElementById(`res-${id}`).textContent = "...";
+        document.getElementById(`res-${id}`).className = "result-display";
+    }
+
+    window.solveBaukasten = function(id) {
+        const data = normalizedData[id];
+        const card = document.getElementById(`task-${id}`);
+        const suffixSel = card.querySelector('.suffix-select');
+        const endSel = card.querySelector('.end-select');
+        
+        suffixSel.value = data.suffix;
+        endSel.value = data.end;
+        evaluateBaukasten(id);
+    }
+
+    renderTasks();
+</script>
+
+</body>
+</html>
