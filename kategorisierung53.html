@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Partizipien sortieren</title>
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: var(--secondary); margin-bottom: 25px; font-weight: bold; }
+
+        .intro-box {
+            background: #eef2f7;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        /* Wort-Pool */
+        .pool-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .word-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: #f1f2f6;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            min-height: 80px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .word-chip {
+            padding: 8px 15px;
+            background: var(--white);
+            border: 2px solid var(--secondary);
+            border-radius: 6px;
+            cursor: grab;
+            font-weight: 500;
+            user-select: none;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .word-chip.dragging { opacity: 0.5; }
+        
+        /* Feedback-Farben für Chips innerhalb der Körbe */
+        .word-chip.correct { background-color: #d4edda; border-color: var(--success); color: #155724; }
+        .word-chip.incorrect { background-color: #f8d7da; border-color: var(--error); color: #721c24; }
+
+        /* Körbe/Kategorien */
+        .basket-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .basket {
+            background: #fff;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            min-height: 150px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .basket.drag-over {
+            border-color: var(--secondary);
+            background-color: #f0f8ff;
+        }
+
+        .basket h4 {
+            margin: 0 0 10px 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .basket-content {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-content: flex-start;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-sol { background-color: var(--success); color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .basket-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+    <div class="subtitle">Sorting: Partizip-Typen erkennen</div>
+
+    <div class="intro-box">
+        <strong>Anleitung:</strong> Ziehe die Wörter in den richtigen Korb. Achte auf die Suffixe!
+        <ul>
+            <li><strong>Aktiv Präsens:</strong> -ущ / -ющ, -ащ / -ящ</li>
+            <li><strong>Aktiv Präteritum:</strong> -вш, -ш</li>
+            <li><strong>Passiv Präsens:</strong> -ем, -им</li>
+        </ul>
+        Das Feedback erfolgt direkt nach dem Ablegen.
+    </div>
+
+    <div class="pool-header">Wort-Pool</div>
+    <div class="word-pool" id="wordPool" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <!-- Chips werden per JS generiert -->
+    </div>
+
+    <div class="basket-container">
+        <div class="basket" id="basket-active-pres" data-type="active-pres" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h4>Aktiv Präsens</h4>
+            <div class="basket-content"></div>
+        </div>
+        <div class="basket" id="basket-active-past" data-type="active-past" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h4>Aktiv Präteritum</h4>
+            <div class="basket-content"></div>
+        </div>
+        <div class="basket" id="basket-passive-pres" data-type="passive-pres" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h4>Passiv Präsens</h4>
+            <div class="basket-content"></div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button class="btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="btn-sol" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    const words = [
+        { text: "читаемый", type: "passive-pres" },
+        { text: "читающий", type: "active-pres" },
+        { text: "читавший", type: "active-past" },
+        { text: "любимый", type: "passive-pres" },
+        { text: "любящий", type: "active-pres" },
+        { text: "любивший", type: "active-past" },
+        { text: "изучаемый", type: "passive-pres" },
+        { text: "изучающий", type: "active-pres" },
+        { text: "изучавший", type: "active-past" },
+        { text: "видимый", type: "passive-pres" },
+        { text: "видящий", type: "active-pres" },
+        { text: "видевший", type: "active-past" },
+        { text: "создаваемый", type: "passive-pres" },
+        { text: "создающий", type: "active-pres" },
+        { text: "создававший", type: "active-past" }
+    ];
+
+    function initPool() {
+        const pool = document.getElementById('wordPool');
+        pool.innerHTML = '';
+        // Zufällig mischen
+        const shuffled = [...words].sort(() => Math.random() - 0.5);
+        
+        shuffled.forEach((word, index) => {
+            const chip = document.createElement('div');
+            chip.className = 'word-chip';
+            chip.textContent = word.text;
+            chip.id = 'chip-' + index;
+            chip.draggable = true;
+            chip.dataset.type = word.type;
+            chip.addEventListener('dragstart', drag);
+            pool.appendChild(chip);
+        });
+    }
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+        if (ev.currentTarget.classList.contains('basket')) {
+            ev.currentTarget.classList.add('drag-over');
+        }
+    }
+
+    // Drag-Over verlassen
+    document.querySelectorAll('.basket, .word-pool').forEach(el => {
+        el.addEventListener('dragleave', (ev) => {
+            ev.currentTarget.classList.remove('drag-over');
+        });
+    });
+
+    function drag(ev) {
+        ev.dataTransfer.setData("textID", ev.target.id);
+        ev.target.classList.add('dragging');
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        const basket = ev.currentTarget;
+        basket.classList.remove('drag-over');
+        
+        const chipId = ev.dataTransfer.getData("textID");
+        const chip = document.getElementById(chipId);
+        chip.classList.remove('dragging');
+
+        // Ziel-Container finden (entweder Pool oder Basket-Content)
+        let targetContainer;
+        if (basket.id === 'wordPool') {
+            targetContainer = basket;
+            chip.classList.remove('correct', 'incorrect');
+        } else {
+            targetContainer = basket.querySelector('.basket-content');
+            // Validierung
+            const expectedType = basket.dataset.type;
+            const actualType = chip.dataset.type;
+            
+            if (actualType === expectedType) {
+                chip.classList.add('correct');
+                chip.classList.remove('incorrect');
+            } else {
+                chip.classList.add('incorrect');
+                chip.classList.remove('correct');
+            }
+        }
+        
+        targetContainer.appendChild(chip);
+    }
+
+    function resetExercise() {
+        initPool();
+        document.querySelectorAll('.basket-content').forEach(content => content.innerHTML = '');
+        document.querySelectorAll('.word-chip').forEach(chip => {
+            chip.classList.remove('correct', 'incorrect');
+        });
+    }
+
+    function showSolution() {
+        resetExercise(); // Erst alles zurück
+        const pool = document.getElementById('wordPool');
+        const chips = Array.from(pool.querySelectorAll('.word-chip'));
+        
+        chips.forEach(chip => {
+            const type = chip.dataset.type;
+            const targetBasket = document.querySelector(`.basket[data-type="${type}"] .basket-content`);
+            chip.classList.add('correct');
+            targetBasket.appendChild(chip);
+        });
+    }
+
+    // Initialisierung
+    initPool();
+</script>
+
+</body>
+</html>
